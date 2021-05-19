@@ -1,0 +1,28 @@
+import csv
+import logging as lg
+import mysql.connector as connection
+lg.basicConfig(filename="logs1.log",level="INFO")  
+mysql=connection.connect(host="localhost",user="root",password="daksha",use_pure=True)
+lg.info("MYSQL connection set!")
+cur=mysql.cursor()
+cur.execute('create table if not exists db.carbon_nanotubes1(x1 int(10),x2 int(10),x3 float(10,7),x4 float(10,7),x5 float(10,7),x6 float(10,7),x7 float(10,7),x8 float(10,7))')
+lg.info("MYSQL table created")
+try:
+    with open('carbon_nanotubes.csv',"r") as data :
+        next(data)
+        reader = csv.reader(data, delimiter="\n")
+        d1=[]
+        for i in reader:
+            for j in i:
+                data=[j.replace(',','.').replace(';',',')]
+                d1.append(data)
+        for i in d1:
+            cur.execute('insert into db.carbon_nanotubes1 values({})'.format(i[0]))
+        lg.info("Data inserted")
+        print("done")
+
+    mysql.commit()
+except:
+    print("Something went wrong check logs")
+    
+            
